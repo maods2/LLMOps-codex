@@ -1,0 +1,6 @@
+FROM python:3.10-slim
+WORKDIR /app
+COPY pyproject.toml /app/
+COPY services /app/services
+RUN pip install --no-cache-dir -e .[serve]
+CMD ["uvicorn", "services.serving.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
