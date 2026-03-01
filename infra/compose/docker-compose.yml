@@ -1,0 +1,31 @@
+services:
+  training:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.training
+    profiles: [dev]
+    volumes:
+      - ../../:/app
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  serving:
+    build:
+      context: ../../
+      dockerfile: infra/docker/Dockerfile.serving
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../../:/app
+    environment:
+      - MODEL_NAME=local-300m
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]

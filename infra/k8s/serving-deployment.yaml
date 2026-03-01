@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-serving
+  template:
+    metadata:
+      labels:
+        app: llm-serving
+    spec:
+      containers:
+        - name: serving
+          image: llm-stack-serving:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: llm-config
+                  key: model_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-serving
+spec:
+  selector:
+    app: llm-serving
+  ports:
+    - port: 80
+      targetPort: 8000
